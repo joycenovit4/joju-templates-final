@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JoJu Templates — Digital Templates for Students & Productivity</title>
+  <meta name="description" content="JoJu Templates — Premium spreadsheet templates yang mudah digunakan dan profesional." />
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo-wrap">
+      <div class="logo-badge">JoJu</div>
+      <div>
+        <div class="brand-title">JoJu Templates</div>
+        <div class="brand-sub">Digital Templates for Students & Productivity</div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button id="theme-toggle" class="icon-btn" title="Toggle dark mode">🌙</button>
+      <button id="cart-toggle" class="icon-btn" title="Keranjang">🛒 <span id="nav-cart-count" class="cart-count">0</span></button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main>
+    <section class="hero container" style="background: url('assets/hero-bg.png') center/cover no-repeat; border-radius:12px; padding:40px;">
+      <div class="hero-inner">
+        <h1 class="hero-title">Premium Spreadsheet Templates</h1>
+        <p class="hero-sub">Template profesional, mudah digunakan, dan siap untuk kegiatan kuliah & produktivitas sehari-hari.</p>
+        <div class="hero-cta">
+          <a href="#stats" class="btn btn-primary">Lihat Statistik</a>
+          <a href="#templates" class="btn btn-ghost">Lihat Template</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <img src="assets/showcase.png" alt="Showcase" class="showcase-img">
+      </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section id="stats" class="stats-section container" aria-live="polite">
+      <div class="stats-inner">
+        <div class="stat-card">
+          <div class="stat-icon">✨</div>
+          <div class="stat-value" id="stat-items-sold">0</div>
+          <div class="stat-label">Template Terjual</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value" id="stat-total-orders">0</div>
+          <div class="stat-label">Total Order</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEMPLATE LIST -->
+    <section id="templates" class="templates container">
+      <h2 class="section-title">Daftar Template</h2>
+      <div id="product-grid" class="product-grid">
+        <!-- products rendered by app.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- CART POPUP -->
+  <aside id="cart-popup" class="cart-popup" role="dialog" aria-label="Keranjang">
+    <header class="cart-popup-header">
+      <div>Keranjang Kamu</div>
+      <button id="cart-close" class="icon-btn">✕</button>
+    </header>
+
+    <div id="cart-items" class="cart-items">
+      <!-- injected by JS -->
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total">
+        <div class="muted">Subtotal</div>
+        <div class="bold" id="cart-subtotal">Rp 0</div>
+      </div>
+      <div class="cart-actions">
+        <a id="go-cart" class="btn btn-ghost" href="cart.html">Lihat Keranjang</a>
+        <button id="checkout-now" class="btn btn-primary">Checkout</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating WhatsApp -->
+  <a id="wa-float" class="wa-float" href="https://wa.me/6285641062268" target="_blank" rel="noreferrer" aria-label="Chat via WhatsApp">💬</a>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div>© <span id="cur-year"></span> JoJu Templates</div>
+      <div class="muted">Made with ❤️</div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>document.getElementById('cur-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

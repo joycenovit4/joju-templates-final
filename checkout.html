@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout - JoJu Templates</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar container">
+    <div class="logo-wrap">
+      <div class="logo-badge">JoJu</div>
+      <div>
+        <div class="brand-title">JoJu Templates</div>
+        <div class="brand-sub">Digital Templates for Students & Productivity</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="cart.html" class="icon-btn">🛒</a>
+      <button id="theme-toggle-checkout" class="icon-btn">🌙</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="checkout-wrap">
+      <h1 class="section-title">Checkout</h1>
+
+      <div id="checkout-items"></div>
+
+      <form id="order-form" name="order" method="POST" data-netlify="true">
+        <input type="hidden" name="productTitle" id="form-productTitle" value="">
+        <input type="hidden" name="amount" id="form-amount" value="">
+
+        <div class="form-row">
+          <label>Nama</label>
+          <input type="text" id="buyer-name" name="buyerName" required>
+        </div>
+
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" id="buyer-email" name="buyerEmail" required>
+        </div>
+
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between"><div>Subtotal</div><div id="summary-subtotal">Rp 0</div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px"><div>Discount</div><div>- Rp 0</div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:700"><div>Total</div><div id="summary-total">Rp 0</div></div>
+        </div>
+
+        <div style="margin-top:14px">
+          <button class="buy-btn" type="submit">Buy Now</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "joju_cart_v2";
+    let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const checkoutItemsEl = document.getElementById("checkout-items");
+    const subtotalEl = document.getElementById("summary-subtotal");
+    const totalEl = document.getElementById("summary-total");
+    const formProductTitle = document.getElementById("form-productTitle");
+    const formAmount = document.getElementById("form-amount");
+    const themeToggleCheckout = document.getElementById("theme-toggle-checkout");
+
+    function formatRupiah(n){ return "Rp " + Number(n).toLocaleString("id-ID"); }
+
+    function renderCheckout(){
+      if(cart.length===0){
+        checkoutItemsEl.innerHTML = '<div class="muted">Keranjang kosong.</div>';
+        subtotalEl.textContent = formatRupiah(0);
+        totalEl.textContent = formatRupiah(0);
+        formProductTitle.value = "";
+        formAmount.value = 0;
+        return;
+      }
+
+      checkoutItemsEl.innerHTML = cart.map(item=>`
+        <div class="checkout-item" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #ccc;">
+          <div>${item.title} x${item.qty}</div>
+          <div>${formatRupiah(item.price*item.qty)}</div>
+        </div>
+      `).join("");
+
+      const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      subtotalEl.textContent = formatRupiah(subtotal);
+      totalEl.textContent = formatRupiah(subtotal); // bisa tambahkan discount jika ada
+      formProductTitle.value = cart.map(i=>i.title).join(", ");
+      formAmount.value = subtotal;
+    }
+
+    renderCheckout();
+
+    // Dark mode
+    const savedTheme = localStorage.getItem("joju_theme")||"light";
+    applyTheme(savedTheme);
+
+    function applyTheme(t){
+      if(t==="dark"){ document.documentElement.classList.add("dark"); themeToggleCheckout.textContent="☀️"; }
+      else{ document.documentElement.classList.remove("dark"); themeToggleCheckout.textContent="🌙"; }
+    }
+
+    themeToggleCheckout.addEventListener("click",()=>{
+      const cur = document.documentElement.classList.contains("dark")?"dark":"light";
+      const next = cur==="dark"?"light":"dark";
+      applyTheme(next);
+      localStorage.setItem("joju_theme", next);
+    });
+
+    // Optional: clear cart after submit
+    const orderForm = document.getElementById("order-form");
+    orderForm.addEventListener("submit", ()=>{
+      localStorage.removeItem(STORAGE_KEY);
+    });
+  </script>
+</body>
+</html>

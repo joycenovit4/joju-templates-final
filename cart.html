@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Keranjang - JoJu Templates</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- NAVBAR -->
+  <header class="navbar container">
+    <div class="logo-wrap">
+      <div class="logo-badge">JoJu</div>
+      <div>
+        <div class="brand-title">JoJu Templates</div>
+        <div class="brand-sub">Digital Templates for Students & Productivity</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="icon-btn">🏠</a>
+      <button id="theme-toggle-cart" class="icon-btn">🌙</button>
+    </div>
+  </header>
+
+  <!-- CART PAGE -->
+  <main class="container cart-page">
+    <h1 class="section-title">Keranjang</h1>
+    <div id="cart-list"></div>
+
+    <div style="margin-top:18px;">
+      <div class="summary-box">
+        <div style="display:flex;justify-content:space-between"><div>Subtotal</div><div id="cart-total">Rp 0</div></div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <a href="checkout.html" class="btn btn-primary" id="go-checkout">Checkout →</a>
+          <button id="clear-cart" class="btn btn-ghost">Kosongkan</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "joju_cart_v2";
+    let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const cartListEl = document.getElementById("cart-list");
+    const cartTotalEl = document.getElementById("cart-total");
+    const clearBtn = document.getElementById("clear-cart");
+    const themeToggleCart = document.getElementById("theme-toggle-cart");
+
+    function formatRupiah(n){ return "Rp " + Number(n).toLocaleString("id-ID"); }
+
+    function renderCartPage(){
+      if(cart.length===0){
+        cartListEl.innerHTML = '<div class="muted">Keranjang kosong.</div>';
+        cartTotalEl.textContent = formatRupiah(0);
+        return;
+      }
+
+      cartListEl.innerHTML = cart.map(item=>`
+        <div class="cart-item-full">
+          <img src="${item.image}" alt="${item.title}">
+          <div style="flex:1">
+            <div style="font-weight:700">${item.title}</div>
+            <div class="muted">${formatRupiah(item.price)}</div>
+            <div style="margin-top:6px">Qty: ${item.qty}</div>
+          </div>
+          <button class="remove-item-btn" data-id="${item.id}" style="background:#ff4d4f;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;">Hapus</button>
+        </div>
+      `).join("");
+
+      const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      cartTotalEl.textContent = formatRupiah(subtotal);
+    }
+
+    renderCartPage();
+
+    // Remove item
+    cartListEl.addEventListener("click", e=>{
+      if(e.target.classList.contains("remove-item-btn")){
+        const id = e.target.dataset.id;
+        cart = cart.filter(i=>i.id!==id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        renderCartPage();
+      }
+    });
+
+    // Clear cart
+    clearBtn.addEventListener("click", ()=>{
+      if(confirm("Apakah kamu yakin ingin mengosongkan keranjang?")){
+        cart = [];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        renderCartPage();
+      }
+    });
+
+    // Dark mode
+    const savedTheme = localStorage.getItem("joju_theme")||"light";
+    applyTheme(savedTheme);
+
+    function applyTheme(t){
+      if(t==="dark"){ document.documentElement.classList.add("dark"); themeToggleCart.textContent="☀️"; }
+      else{ document.documentElement.classList.remove("dark"); themeToggleCart.textContent="🌙"; }
+    }
+
+    themeToggleCart.addEventListener("click",()=>{
+      const cur = document.documentElement.classList.contains("dark")?"dark":"light";
+      const next = cur==="dark"?"light":"dark";
+      applyTheme(next);
+      localStorage.setItem("joju_theme", next);
+    });
+  </script>
+</body>
+</html>
