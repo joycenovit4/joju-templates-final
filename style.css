@@ -329,3 +329,33 @@ body.dark{background:var(--bg);color:var(--text);}
 .buy-btn:hover {
   background: #463fd4;
 }
+
+.thanks-container {
+    max-width: 480px;
+    margin: 100px auto;
+    padding: 30px;
+    text-align: center;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.wa-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 18px;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+    width: fit-content;
+}
+
+.back-home {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    opacity: 0.7;
+}
+
