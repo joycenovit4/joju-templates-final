@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <!-- NAVBAR -->
   <header class="navbar container">
     <div class="logo-wrap">
@@ -29,14 +28,9 @@
 
       <div id="checkout-items"></div>
 
-      <!-- FORM TO NETLIFY -->
-      <form id="order-form" name="order" method="POST" data-netlify="true" action="thanks.html">
-
-        <!-- HIDDEN INPUTS FOR STATISTICS -->
-        <input type="hidden" name="productTitle" id="form-productTitle">
-        <input type="hidden" name="amount" id="form-amount">
-        <input type="hidden" name="quantity" id="form-quantity">
-        <input type="hidden" name="orderId" id="form-orderId">
+      <form id="order-form" name="order" method="POST" data-netlify="true">
+        <input type="hidden" name="productTitle" id="form-productTitle" value="">
+        <input type="hidden" name="amount" id="form-amount" value="">
 
         <div class="form-row">
           <label>Nama</label>
@@ -48,48 +42,168 @@
           <input type="email" id="buyer-email" name="buyerEmail" required>
         </div>
 
-        <div style="margin-top:12px;">
+        <div style="margin-top:12px">
           <div style="display:flex;justify-content:space-between"><div>Subtotal</div><div id="summary-subtotal">Rp 0</div></div>
           <div style="display:flex;justify-content:space-between;margin-top:6px"><div>Discount</div><div>- Rp 0</div></div>
           <div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:700"><div>Total</div><div id="summary-total">Rp 0</div></div>
         </div>
 
         <div style="margin-top:14px">
-          <button class="buy-btn" type="submit">Buy Now</button>
-
-          <!-- METODE PEMBAYARAN -->
+          <button id="buyBtn" class="buy-btn" type="button">Buy Now</button>
           <div style="margin-top:20px; padding:14px; border-radius:8px; border:1px solid #ccc; background:#fafafa;">
-            <h3 style="margin-bottom:10px;">Metode Pembayaran Transfer</h3>
+          <h3 style="margin-bottom:10px;">Metode Pembayaran Transfer</h3>
 
-            <div style="display:flex; justify-content:space-between;">
-              <span>Bank</span><strong>Hana Bank</strong>
-            </div>
+          <div style="display:flex; justify-content:space-between;">
+          <span>Bank</span>
+          <strong>Hana Bank</strong>
+          </div>
 
-            <div style="display:flex; justify-content:space-between; margin-top:6px;">
-              <span>No Rekening</span><strong>10554246130</strong>
-            </div>
+          <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <span>No Rekening</span>
+          <strong>10554246130</strong>
+          </div>
 
-            <div style="display:flex; justify-content:space-between; margin-top:6px;">
-              <span>A/n</span><strong>Junisa</strong>
-            </div>
+          <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <span>A/n</span>
+          <strong>Junisa</strong>
+          </div>
 
-            <p style="margin-top:10px; font-size:13px; color:#555;">
-              Setelah transfer, kirim bukti pembayaran ya!
-            </p>
+          <p style="margin-top:10px; font-size:13px; color:#555;">
+            Setelah transfer, kirim bukti pembayaran ya ✨
+          </p>
           </div>
         </div>
       </form>
-
-      <!-- ⭐⭐⭐ DUMMY NETLIFY FORM (WAJIB ADA) ⭐⭐⭐ -->
-      <form name="order" netlify hidden>
-        <input type="text" name="buyerName">
-        <input type="email" name="buyerEmail">
-        <input type="text" name="productTitle">
-        <input type="number" name="amount">
-        <input type="number" name="quantity">
-        <input type="text" name="orderId">
-      </form>
-      <!-- ⭐⭐⭐ END DUMMY FORM ⭐⭐⭐ -->
-
     </div>
   </main>
+
+  <script>
+    const STORAGE_KEY = "joju_cart_v2";
+    let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    const checkoutItemsEl = document.getElementById("checkout-items");
+    const subtotalEl = document.getElementById("summary-subtotal");
+    const totalEl = document.getElementById("summary-total");
+    const formProductTitle = document.getElementById("form-productTitle");
+    const formAmount = document.getElementById("form-amount");
+    const themeToggleCheckout = document.getElementById("theme-toggle-checkout");
+
+    function formatRupiah(n){ return "Rp " + Number(n).toLocaleString("id-ID"); }
+
+    function renderCheckout(){
+      if(cart.length===0){
+        checkoutItemsEl.innerHTML = '<div class="muted">Keranjang kosong.</div>';
+        subtotalEl.textContent = formatRupiah(0);
+        totalEl.textContent = formatRupiah(0);
+        formProductTitle.value = "";
+        formAmount.value = 0;
+        return;
+      }
+
+      checkoutItemsEl.innerHTML = cart.map(item=>`
+        <div class="checkout-item" style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed #ccc;">
+          <div>${item.title} x${item.qty}</div>
+          <div>${formatRupiah(item.price*item.qty)}</div>
+        </div>
+      `).join("");
+
+      const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+      subtotalEl.textContent = formatRupiah(subtotal);
+      totalEl.textContent = formatRupiah(subtotal); // bisa tambahkan discount jika ada
+      formProductTitle.value = cart.map(i=>i.title).join(", ");
+      formAmount.value = subtotal;
+    }
+
+    renderCheckout();
+
+    // Dark mode
+    const savedTheme = localStorage.getItem("joju_theme")||"light";
+    applyTheme(savedTheme);
+
+    function applyTheme(t){
+      if(t==="dark"){ document.documentElement.classList.add("dark"); themeToggleCheckout.textContent="☀️"; }
+      else{ document.documentElement.classList.remove("dark"); themeToggleCheckout.textContent="🌙"; }
+    }
+
+    themeToggleCheckout.addEventListener("click",()=>{
+      const cur = document.documentElement.classList.contains("dark")?"dark":"light";
+      const next = cur==="dark"?"light":"dark";
+      applyTheme(next);
+      localStorage.setItem("joju_theme", next);
+    });
+
+    // Optional: clear cart after submit
+    const orderForm = document.getElementById("order-form");
+    orderForm.addEventListener("submit", ()=>{
+      localStorage.removeItem(STORAGE_KEY);
+    });
+  </script>
+  <script>
+  document.getElementById("buyBtn").addEventListener("click", function () {
+    
+    // ambil data dari localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart.length === 0) {
+      alert("Keranjang kosong!");
+      return;
+    }
+
+    const productId = cart[0].id;
+
+    // simpan jumlah terjual
+    let soldData = JSON.parse(localStorage.getItem("soldData")) || {};
+    if (!soldData[productId]) soldData[productId] = 0;
+
+    soldData[productId]++;
+
+    localStorage.setItem("soldData", JSON.stringify(soldData));
+
+    // munculkan notif
+    alert("Terima kasih sudah membeli 🎉🙏\nJangan lupa kirim bukti pembayaran ya!");
+
+    // hapus keranjang
+    localStorage.removeItem("cart");
+
+    // kembali ke halaman utama
+    window.location.href = "index.html";
+  });
+</script>
+<script>
+document.getElementById("buyBtn").addEventListener("click", function () {
+  
+  const cart = JSON.parse(localStorage.getItem("joju_cart_v2")) || [];
+
+  if(cart.length === 0){
+    alert("Keranjang kosong!");
+    return;
+  }
+
+  const productId = cart[0].id;
+
+  // --- UPDATE SOLD DATA & ORDER COUNT ---
+let soldData = JSON.parse(localStorage.getItem("soldData")) || {};
+let orderCount = Number(localStorage.getItem("orderCount") || 0);
+
+if (!soldData[productId]) {
+  soldData[productId] = 0;
+}
+
+soldData[productId]++;   // update terjual per item
+orderCount++;            // total order bertambah 1
+
+localStorage.setItem("soldData", JSON.stringify(soldData));
+localStorage.setItem("orderCount", orderCount);
+
+  // tampilan feedback
+  alert("Terima kasih sudah membeli 🎉🙏\nJangan lupa kirim bukti pembayaran ya!");
+
+  // hapus keranjang
+  localStorage.removeItem("joju_cart_v2");
+
+  // kembali ke halaman utama
+  window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>

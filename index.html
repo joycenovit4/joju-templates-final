@@ -33,29 +33,12 @@
         <h1 class="hero-title">Premium Spreadsheet Templates</h1>
         <p class="hero-sub">Template profesional, mudah digunakan, dan siap untuk kegiatan kuliah & produktivitas sehari-hari.</p>
         <div class="hero-cta">
-          <a href="#stats" class="btn btn-primary">Lihat Statistik</a>
+          <a href="https://wa.me/6285641062268" target="_blank" class="btn btn-primary">Pesan via WhatsApp</a>
           <a href="#templates" class="btn btn-ghost">Lihat Template</a>
         </div>
       </div>
       <div class="hero-art">
         <img src="assets/showcase.png" alt="Showcase" class="showcase-img">
-      </div>
-    </section>
-
-    <!-- STATISTICS -->
-    <section id="stats" class="stats-section container" aria-live="polite">
-      <div class="stats-inner">
-        <div class="stat-card">
-          <div class="stat-icon">✨</div>
-          <div class="stat-value" id="stat-items-sold">0</div>
-          <div class="stat-label">Template Terjual</div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">🛒</div>
-          <div class="stat-value" id="stat-total-orders">0</div>
-          <div class="stat-label">Total Order</div>
-        </div>
       </div>
     </section>
 
@@ -104,5 +87,22 @@
 
   <script src="app.js"></script>
   <script>document.getElementById('cur-year').textContent = new Date().getFullYear();</script>
+
+  <script>
+function loadStats(){
+  let soldData = JSON.parse(localStorage.getItem("soldData")) || {};
+  let orderCount = Number(localStorage.getItem("orderCount") || 0);
+
+  // jumlah semua template terjual
+  let totalSold = Object.values(soldData).reduce((sum, val) => sum + val, 0);
+
+  // update tampilan
+  document.getElementById("stat-items-sold").textContent = totalSold;
+  document.getElementById("stat-total-orders").textContent = orderCount;
+}
+
+loadStats();
+</script>
+
 </body>
 </html>
